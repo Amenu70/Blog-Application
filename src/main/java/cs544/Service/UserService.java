@@ -26,13 +26,6 @@ public class UserService implements IUserService{
 //    }
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
-        User user=this.dtoToUser(userDTO);
-        User savedUser= userRepository.save(user);
-        return this.userToUserDto(savedUser);
-    }
-
-    @Override
     public UserDTO updateUser(UserDTO userDTO, Integer userId) {
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new ResourceNotFoundException("User","id",userId));
