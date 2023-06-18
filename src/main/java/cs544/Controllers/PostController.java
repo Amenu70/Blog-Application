@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-//@RequestMapping("")
+@RequestMapping("/api/posts")
 public class PostController {
     @Autowired
     private PostService postService;
-    @PostMapping("/users/{userId}/post")
+    @PostMapping("/{userId}")
     public ResponseEntity publishPost(@RequestBody PostDTO postDto, @PathVariable Integer userId){
         PostDTO createdPost=postService.savePost(userId,postDto);
         return new ResponseEntity(createdPost,HttpStatus.OK);

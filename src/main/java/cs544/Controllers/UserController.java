@@ -11,16 +11,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("api/users")
 public class UserController {
     @Autowired
     private IUserService userService;
-
-    @PostMapping("/sign")
-    public ResponseEntity signup(@Valid  @RequestBody UserDTO userDTO){
-        UserDTO createdUserDTO=userService.createUser(userDTO);
-        return new ResponseEntity(createdUserDTO,HttpStatus.OK);
+    @GetMapping("/")
+    public ResponseEntity getAllUsers(){
+        return ResponseEntity.ok(userService.getAllUsers());
     }
+
     @PutMapping("/{userId}")
     public ResponseEntity updateUser (@Valid @RequestBody UserDTO userDTO, @PathVariable("userId") Integer userId){
         UserDTO updatedUser=userService.updateUser(userDTO,userId);
@@ -31,16 +30,9 @@ public class UserController {
         userService.deleteUser(userId);
         return new ResponseEntity(Map.of("message","User Deleted Successfully"),HttpStatus.OK);
     }
-    @GetMapping("/")
-    public ResponseEntity getAllUsers(){
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
+
     @GetMapping("/{userId}")
     public ResponseEntity getUserById(@PathVariable("userId") Integer userId){
         return ResponseEntity.ok(userService.getUserById(userId));
     }
-//    @PostMapping("/login")
-//    public void login(@RequestBody UserLoginDTO userLoginDTO){
-//
-//    }
 }
