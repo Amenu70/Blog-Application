@@ -24,7 +24,7 @@ public class SecurityConfiguration {
                  .csrf()
                  .disable()
                  .authorizeHttpRequests()
-                 .requestMatchers("/api/register/**","/api/comments/**")
+                 .requestMatchers("/api/register/**","/api/authenticate/**")
                  .permitAll()
 //                 .requestMatchers("/api/users/{userId}/post").hasAnyAuthority("AUTHOR","ADMIN")
                  //.requestMatchers("/api/posts/{userId}").hasAnyAuthority("USER","ADMIN")

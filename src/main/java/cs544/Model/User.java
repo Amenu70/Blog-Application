@@ -25,11 +25,11 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private String about;
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "postAuthor")
     private List<Post> posts=new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private Role role;
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "commentedByUser",cascade = CascadeType.ALL,fetch=FetchType.LAZY)
     private List<Comment> comments=new ArrayList<>();
     @OneToOne(mappedBy = "user")
     private Vote vote;
