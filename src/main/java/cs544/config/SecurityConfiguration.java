@@ -24,9 +24,10 @@ public class SecurityConfiguration {
                  .csrf()
                  .disable()
                  .authorizeHttpRequests()
-                 .requestMatchers("/api/register/**")
+                 .requestMatchers("/api/register/**","/api/comments/**")
                  .permitAll()
-                 .requestMatchers("/api/users/{userId}/post").hasAnyAuthority("AUTHOR","ADMIN")
+//                 .requestMatchers("/api/users/{userId}/post").hasAnyAuthority("AUTHOR","ADMIN")
+                 //.requestMatchers("/api/posts/{userId}").hasAnyAuthority("USER","ADMIN")
                  .anyRequest()
                  .authenticated()
                  .and()
@@ -35,7 +36,7 @@ public class SecurityConfiguration {
                  .and()
                  .authenticationProvider(authenticationProvider)
                  .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-                 
+
         return http.build();
     }
 }
