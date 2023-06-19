@@ -18,21 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/posts")
-//@RequestMapping("/api/user/{userId}")
+@RequestMapping("api/posts")
 public class CommentController {
     @Autowired
     private CommentService commentService;
-    @Autowired
-    private PostService postService;
-    @Autowired
-    private UserService userService;
-//    @PostMapping("{userId}/post/{postId}")
-    @PostMapping("/{postId}/comments")
-    public ResponseEntity publishComment(@RequestBody CommentDTO commentDTO, @PathVariable Integer postId){
-        String username = postService.readSinglePost(postId).getUsername();
-        User user= userService.findByUserName(username);
-        PostDTO createdComment=commentService.saveComment(user.getId(),postId,commentDTO);
+
+    @PostMapping("/{postId}/comments/{userId}")
+    public ResponseEntity publishComment(@RequestBody CommentDTO commentDTO, @PathVariable Integer postId,@PathVariable Integer userId){
+        CommentDTO createdComment=commentService.saveComment(postId,userId,commentDTO);
         return new ResponseEntity(createdComment, HttpStatus.OK);
     }
     @GetMapping("/{postId}/comments")
@@ -41,7 +34,7 @@ public class CommentController {
         return new ResponseEntity<>(comments,HttpStatus.OK);
     }
     @PutMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity<CommentDTO> updateComment(@RequestBody CommentDTO commentDTO,@PathVariable Integer commentId){
+    public ResponseEntity<CommentDTO> updateComment(@RequestBody CommentDTO commentDTO,@PathVariable Integer commentId,@PathVariable Integer postId){
         CommentDTO editedComment= commentService.editComment(commentId,commentDTO);
         return new ResponseEntity<>(editedComment,HttpStatus.OK);
     }
@@ -50,6 +43,5 @@ public class CommentController {
         commentService.deleteComment(commentId);
         return new ResponseEntity(Map.of("message","Comment Deleted Successfully"),HttpStatus.OK);
     }
-
 
 }

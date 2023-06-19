@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
-
+@Table(name="_Posts")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,12 +25,9 @@ public class Post {
     private String body;
     private LocalDateTime postDate;
     private LocalDateTime updateOn;
-    //    @NotBlank
-    private String userName;
-    @ManyToOne
-    private User user;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name="comments_id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    private User postAuthor;
+    @OneToMany(mappedBy = "commentOnPost",cascade = CascadeType.ALL)
     private List<Comment> comments= new ArrayList<>();
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
     private List<Vote> votes = new ArrayList<>();

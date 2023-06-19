@@ -29,7 +29,7 @@ public class PostDTO {
     private LocalDateTime postDate;
     @JsonFormat(pattern = "MM/dd/yyyy HH:mm:ss")
     private LocalDateTime updateOn;
-    private String username;
-    private List<CommentDTO> commentDTOList;
+    private String byUser;
+    private List<CommentDTO> comments;
 
 }

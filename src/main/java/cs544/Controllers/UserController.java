@@ -15,7 +15,7 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private IUserService userService;
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity getAllUsers(){
         return ResponseEntity.ok(userService.getAllUsers());
     }
