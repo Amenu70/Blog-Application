@@ -58,6 +58,10 @@ public class UserService implements IUserService{
                 .orElseThrow(()->new ResourceNotFoundException("User","id",userId));
         userRepository.delete(user);
     }
+
+    public User findByUserName(String userName){
+        return userRepository.findByName(userName).orElseThrow(()->new ResourceNotFoundException("User","name", 0));
+    }
     public User dtoToUser(UserDTO userDTO){
         User user=modelMapper.map(userDTO, User.class);
 //        User user=new User();
