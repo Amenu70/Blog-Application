@@ -7,7 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -15,18 +20,20 @@ import java.util.Date;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @NotBlank
+    private Integer id;
     private String title;
-    @Lob
-    @NotEmpty
     private String body;
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    private Date postDate;
-    @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-    private Date updateOn;
+    private LocalDateTime postDate;
+    private LocalDateTime updateOn;
     //    @NotBlank
     private String userName;
     @ManyToOne
     private User user;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="comments_id")
+    private List<Comment> comments= new ArrayList<>();
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
+    private List<Vote> votes = new ArrayList<>();
+
+
 }
