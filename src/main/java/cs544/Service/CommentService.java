@@ -1,8 +1,7 @@
 package cs544.Service;
 
 import cs544.DTO.CommentDTO;
-import cs544.DTO.PostDTO;
-import cs544.Exception.PostNotFoundException;
+import cs544.DTO.ModelDTOMapper;
 import cs544.Exception.ResourceNotFoundException;
 import cs544.Model.Comment;
 import cs544.Model.Post;
@@ -26,30 +25,30 @@ public class CommentService {
     @Autowired
     private PostRepository postRepository;
     @Autowired
-    private PostService postService;
+    private ModelDTOMapper modelDTOMapper;
 
-//    public List<Comment> getAllComments(){
-//
-//        return commentRepository.findAll();
-//    }
-    public PostDTO saveComment(Integer userId, Integer postId, CommentDTO commentDTO){
+
+    public CommentDTO saveComment(Integer postId, Integer userId,CommentDTO commentDTO){
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new ResourceNotFoundException("User","id",userId));
         Post post =postRepository.findById(postId)
                 .orElseThrow(()->new ResourceNotFoundException("Post","id",postId));
-        Comment comment=commentDTOtoComment(commentDTO);
-        comment.setUser(user);
-        comment.setPost(post);
-        commentRepository.save(comment);
-        return postService.mapFromPostToDto(post);
+        Comment comment=modelDTOMapper.commentDTOtoComment(commentDTO);
+        comment.setCommentedOn(LocalDateTime.now());
+        comment.setUpdatedOn(LocalDateTime.now());
+        comment.setCommentedByUser(user);
+        comment.setCommentOnPost(post);
+        return modelDTOMapper.commentToCommmentDTO(commentRepository.save(comment));
+
     }
     public CommentDTO editComment(Integer commentId, CommentDTO commentDTO){
-        Comment newComment=commentDTOtoComment(commentDTO);
+        Comment newComment=modelDTOMapper.commentDTOtoComment(commentDTO);
         Comment oldComment = commentRepository.findById(commentId).
                 orElseThrow(()-> new ResourceNotFoundException("Comment","id",commentId));
         oldComment.setContent(newComment.getContent());
         oldComment.setUpdatedOn(LocalDateTime.now());
-        return commentToCommmentDTO(commentRepository.save(oldComment));
+        Comment updatedComment=commentRepository.save(oldComment);
+        return modelDTOMapper.commentToCommmentDTO(updatedComment);
     }
     public void deleteComment(Integer commentId){
         try {
@@ -59,27 +58,13 @@ public class CommentService {
         }
     }
     public List<CommentDTO> commentsOfSpecificPost(Integer postId){
-
-        return commentRepository.findByPostId(postId).stream()
-                .map(this::commentToCommmentDTO)
+        Post post =postRepository.findById(postId)
+                .orElseThrow(()->new ResourceNotFoundException("Post","id",postId));
+        return post.getComments().stream()
+                .map(comment -> modelDTOMapper.commentToCommmentDTO(comment))
                 .toList();
     }
-    public Comment commentDTOtoComment(CommentDTO commentDTO){
-        Comment comment=new Comment();
-        comment.setContent(commentDTO.getContent());
-        comment.setCommentedOn(LocalDateTime.now());
-        comment.setUpdatedOn(LocalDateTime.now());
-        return comment;
-    }
-    public CommentDTO commentToCommmentDTO(Comment comment){
-        CommentDTO commentDTO=new CommentDTO();
-        commentDTO.setCommentId(comment.getId());
-        commentDTO.setContent(comment.getContent());
-        commentDTO.setUpdatedOn(comment.getUpdatedOn());
-        commentDTO.setCommentedOn(comment.getCommentedOn());
-        commentDTO.setOnPostId(comment.getPost().getId());
-        commentDTO.setByUser(comment.getUser().getName());
-        return commentDTO;
-    }
+
+
 
 }

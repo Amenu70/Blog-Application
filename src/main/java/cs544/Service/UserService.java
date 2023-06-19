@@ -1,5 +1,6 @@
 package cs544.Service;
 
+import cs544.DTO.ModelDTOMapper;
 import cs544.DTO.UserDTO;
 import cs544.Exception.ResourceNotFoundException;
 import cs544.Model.User;
@@ -16,14 +17,7 @@ public class UserService implements IUserService{
     @Autowired
     private IUserRepository userRepository;
     @Autowired
-    private ModelMapper modelMapper;
-////    @Autowired
-////    private PasswordEncoder passwordEncoder;
-//
-//
-//    private String encodePassword(String password){
-////        return passwordEncoder.encode(password);
-//    }
+    private ModelDTOMapper modelDTOMapper;
 
     @Override
     public UserDTO updateUser(UserDTO userDTO, Integer userId) {
@@ -34,21 +28,21 @@ public class UserService implements IUserService{
         user.setPassword(userDTO.getPassword());
         user.setAbout(userDTO.getAbout());
         User updatedUser=userRepository.save(user);
-        return this.userToUserDto(updatedUser);
+        return modelDTOMapper.userToUserDto(updatedUser);
     }
 
     @Override
     public UserDTO getUserById(Integer userId) {
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new ResourceNotFoundException("User","id",userId));
-        return this.userToUserDto(user);
+        return modelDTOMapper.userToUserDto(user);
     }
 
     @Override
     public List<UserDTO> getAllUsers() {
         List<User> users=userRepository.findAll();
         return users.stream()
-                .map(user->this.userToUserDto(user))
+                .map(user->modelDTOMapper.userToUserDto(user))
                 .toList();
     }
 
@@ -62,24 +56,6 @@ public class UserService implements IUserService{
     public User findByUserName(String userName){
         return userRepository.findByName(userName).orElseThrow(()->new ResourceNotFoundException("User","name", 0));
     }
-    public User dtoToUser(UserDTO userDTO){
-        User user=modelMapper.map(userDTO, User.class);
-//        User user=new User();
-//        user.setName(userDTO.getName());
-//        user.setEmail(userDTO.getEmail());
-//        user.setPassword(userDTO.getPassword());
-//        user.setAbout(userDTO.getAbout());
-        return user;
-    }
-    public UserDTO userToUserDto(User user){
-        UserDTO userDTO=modelMapper.map(user, UserDTO.class);
-//        UserDTO userDTO=new UserDTO();
-//        userDTO.setId(user.getId());
-//        userDTO.setName(user.getName());
-//        userDTO.setEmail(user.getEmail());
-//        userDTO.setPassword(user.getPassword());
-//        userDTO.setAbout(user.getAbout());
-        return userDTO;
-    }
+
 
 }

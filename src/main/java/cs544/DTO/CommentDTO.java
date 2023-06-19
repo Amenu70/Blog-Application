@@ -15,12 +15,10 @@ public class CommentDTO {
     private Integer commentId;
     @NotBlank
     private String Content;
+    private String commentedByUser;
     @JsonFormat(pattern = "MM/dd/yyyy HH:mm:ss")
     private LocalDateTime commentedOn;
     @JsonFormat(pattern = "MM/dd/yyyy HH:mm:ss")
     private LocalDateTime updatedOn;
 
-    private Integer onPostId;
-
-    private String byUser;
 }
