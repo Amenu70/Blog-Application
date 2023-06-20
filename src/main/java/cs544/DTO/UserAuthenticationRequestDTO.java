@@ -2,17 +2,15 @@ package cs544.DTO;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
-
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-public class UserDTO {
+public class UserAuthenticationRequestDTO {
     private Integer id;
     @NotNull
     @Size(min=4,message="Username must be min of 4 characters")
@@ -24,6 +22,6 @@ public class UserDTO {
     private String password;
     @NotNull
     private String about;
+    @Pattern(regexp = "^(reader|author)$", message = "Allowed values are 'reader' or 'author' in lowercase")
     private String role;
-    private List<PostDTO> posts;
 }

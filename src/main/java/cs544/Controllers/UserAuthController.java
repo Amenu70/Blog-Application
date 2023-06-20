@@ -1,7 +1,7 @@
 package cs544.Controllers;
 
-import cs544.DTO.UserAuthenticationResponse;
-import cs544.DTO.UserDTO;
+import cs544.DTO.UserAuthenticationRequestDTO;
+import cs544.DTO.UserAuthenticationResponseDTO;
 import cs544.DTO.UserLoginDTO;
 import cs544.Service.UserAuthenticationService;
 import jakarta.validation.Valid;
@@ -20,12 +20,12 @@ public class UserAuthController {
     @Autowired
     private UserAuthenticationService service;
     @PostMapping("/register")
-    public ResponseEntity<UserAuthenticationResponse> register(@Valid @RequestBody UserDTO userDTO) {
-        return ResponseEntity.ok(service.register(userDTO));
+    public ResponseEntity<UserAuthenticationResponseDTO> register(@Valid @RequestBody UserAuthenticationRequestDTO userAuthenticationRequestDTO) {
+        return ResponseEntity.ok(service.register(userAuthenticationRequestDTO));
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<UserAuthenticationResponse> register(@RequestBody UserLoginDTO userLoginDTO) {
+    public ResponseEntity<UserAuthenticationResponseDTO> register(@RequestBody UserLoginDTO userLoginDTO) {
         return ResponseEntity.ok(service.authenticate(userLoginDTO));
     }
 }

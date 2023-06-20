@@ -9,6 +9,7 @@ import cs544.Repository.IUserRepository;
 import cs544.Service.CommentService;
 import cs544.Service.PostService;
 import cs544.Service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +25,14 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping("/{postId}/comments/{userId}")
-    public ResponseEntity publishComment(@RequestBody CommentDTO commentDTO, @PathVariable Integer postId,@PathVariable Integer userId){
+    public ResponseEntity<CommentDTO> publishComment(@Valid  @RequestBody CommentDTO commentDTO, @PathVariable Integer postId, @PathVariable Integer userId){
         CommentDTO createdComment=commentService.saveComment(postId,userId,commentDTO);
-        return new ResponseEntity(createdComment, HttpStatus.OK);
+        return new ResponseEntity<>(createdComment, HttpStatus.CREATED);
     }
     @GetMapping("/{postId}/comments")
     public ResponseEntity<List<CommentDTO>> getCommentsOfaPost(@PathVariable Integer postId){
         List<CommentDTO> comments = commentService.commentsOfSpecificPost(postId);
-        return new ResponseEntity<>(comments,HttpStatus.OK);
+        return new ResponseEntity<>(comments,HttpStatus.FOUND);
     }
     @PutMapping("/{postId}/comments/{commentId}")
     public ResponseEntity<CommentDTO> updateComment(@RequestBody CommentDTO commentDTO,@PathVariable Integer commentId,@PathVariable Integer postId){
@@ -39,9 +40,9 @@ public class CommentController {
         return new ResponseEntity<>(editedComment,HttpStatus.OK);
     }
     @DeleteMapping("/{postId}/comments/{commentId}")
-    public ResponseEntity deleteComment(@PathVariable Integer commentId){
+    public ResponseEntity<Map<String,String>> deleteComment(@PathVariable Integer commentId){
         commentService.deleteComment(commentId);
-        return new ResponseEntity(Map.of("message","Comment Deleted Successfully"),HttpStatus.OK);
+        return new ResponseEntity<>(Map.of("message","Comment Deleted Successfully"),HttpStatus.OK);
     }
 
 }

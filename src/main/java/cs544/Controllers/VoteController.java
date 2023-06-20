@@ -1,41 +1,43 @@
 package cs544.Controllers;
 
-import cs544.Model.Comment;
-import cs544.Model.Vote;
+import cs544.DTO.VoteDTO;
+
 import cs544.Service.VoteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/votes")
+@RequestMapping("/api/posts")
 public class VoteController {
     @Autowired
     private VoteService voteService;
 
-    @PostMapping("/{userId}/post/{postId}")
-    public ResponseEntity publishComment(@RequestBody Vote vote, @PathVariable Integer userId, @PathVariable Integer postId){
-        Vote createdVote=voteService.saveVote(userId,postId,vote);
-        return new ResponseEntity(createdVote, HttpStatus.OK);
+    @PostMapping("/{postId}/votes/{userId}")
+    public ResponseEntity<VoteDTO> publishVote(@Valid @RequestBody VoteDTO voteDTO, @PathVariable Integer postId, @PathVariable Integer userId){
+        VoteDTO createdVote=voteService.saveVote(userId,postId,voteDTO);
+        return new ResponseEntity<>(createdVote, HttpStatus.CREATED);
     }
-    @GetMapping("/post/{postId}")
-    public ResponseEntity<List<Vote>> getCommentsOfaPost(@PathVariable Integer postId){
-        List<Vote> votes = voteService.votesOfSpecificPost(postId);
-        return new ResponseEntity<>(votes,HttpStatus.OK);
+    @GetMapping("/{postId}/votes")
+    public ResponseEntity<List<VoteDTO>> getVotesOnaPost(@PathVariable Integer postId){
+        List<VoteDTO> voteDTOSs = voteService.votesOfSpecificPost(postId);
+        return new ResponseEntity<>(voteDTOSs,HttpStatus.FOUND);
     }
 
-    @PutMapping("/{voteId}")
-    public ResponseEntity<Vote> updateComment(@RequestBody Vote vote,@PathVariable Integer voteId){
-        Vote editedVote= voteService.editVote(voteId,vote);
+    @PutMapping("/{postId}/votes/{voteId}")
+    public ResponseEntity<VoteDTO> updateVote(@RequestBody VoteDTO voteDTO, @PathVariable Integer voteId, @PathVariable String postId){
+        VoteDTO editedVote= voteService.editVote(voteId,voteDTO);
         return new ResponseEntity<>(editedVote,HttpStatus.OK);
     }
     @DeleteMapping("/{voteId}")
-    public ResponseEntity deleteComment(@PathVariable Integer voteId){
+    public ResponseEntity<Map<String,String>> deleteVote(@PathVariable Integer voteId){
         voteService.deleteVote(voteId);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(Map.of("message","Vote Deleted Successfully"),HttpStatus.OK);
     }
 
 }

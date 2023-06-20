@@ -1,6 +1,7 @@
 package cs544.DTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import cs544.Model.Vote;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -31,5 +32,6 @@ public class PostDTO {
     private LocalDateTime updateOn;
     private String byUser;
     private List<CommentDTO> comments;
+    private List<VoteDTO> votes;
 
 }

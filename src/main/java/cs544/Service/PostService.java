@@ -7,25 +7,21 @@ import cs544.Model.Post;
 import cs544.Model.User;
 import cs544.Repository.IUserRepository;
 import cs544.Exception.PostNotFoundException;
-import cs544.Repository.PostRepository;
-import org.modelmapper.ModelMapper;
+import cs544.Repository.IPostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
-public class PostService {
+public class PostService implements IPostService{
     @Autowired
-    private PostRepository postRepository;
+    private IPostRepository postRepository;
     @Autowired
     private IUserRepository userRepository;
+//    private UserService userService;
     @Autowired
     private ModelDTOMapper modelDTOMapper;
 
@@ -40,17 +36,18 @@ public class PostService {
         Post post = modelDTOMapper.postDTOtOPost(postDto);
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new ResourceNotFoundException("User","id",userId));
+//        User user=userService.getUserById()
         post.setPostAuthor(user);
         post.setPostDate(LocalDateTime.now());
         post.setUpdateOn(LocalDateTime.now());
         return modelDTOMapper.postToPostDTO(postRepository.save(post));
     }
     public PostDTO editPost(Integer id, PostDTO postDto){
-        Post post =postRepository.findById(id).orElseThrow(()->new PostNotFoundException("For id"+id));
+        Post post = postRepository.findById(id).orElseThrow(()->new PostNotFoundException("For id"+id));
         post.setTitle(postDto.getTitle());
         post.setBody(postDto.getBody());
         post.setUpdateOn(LocalDateTime.now());
-        Post editedPost=postRepository.save(post);
+        Post editedPost= postRepository.save(post);
         return modelDTOMapper.postToPostDTO(editedPost);
     }
     public void deletePost(Integer id){
