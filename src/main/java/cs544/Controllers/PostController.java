@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("/api")
 public class PostController {
     @Autowired
     private PostService postService;
     @PostMapping("/users/{userId}/posts")
-    public ResponseEntity publishPost(@RequestBody PostDTO postDto, @PathVariable Integer userId){
+    public ResponseEntity<PostDTO> publishPost(@Valid @RequestBody PostDTO postDto, @PathVariable Integer userId){
         PostDTO createdPost=postService.savePost(userId,postDto);
-        return new ResponseEntity(createdPost,HttpStatus.OK);
+        return new ResponseEntity<>(createdPost,HttpStatus.OK);
     }
 
     @GetMapping("/posts")
@@ -31,14 +31,14 @@ public class PostController {
         return new ResponseEntity<>(postService.readSinglePost(postId),HttpStatus.OK);
     }
     @PutMapping("/posts/{postId}")
-    public ResponseEntity editPost(@PathVariable Integer postId, @RequestBody PostDTO postDto){
+    public ResponseEntity<PostDTO> editPost(@PathVariable Integer postId, @RequestBody PostDTO postDto){
         PostDTO editedPost=postService.editPost(postId,postDto);
-        return new ResponseEntity(editedPost,HttpStatus.OK);
+        return new ResponseEntity<>(editedPost,HttpStatus.OK);
     }
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity deletePost(@PathVariable Integer postId){
+    public ResponseEntity<Map<String,String>> deletePost(@PathVariable Integer postId){
         postService.deletePost(postId);
-        return new ResponseEntity(Map.of("message","Post Deleted Successfully"),HttpStatus.OK);
+        return new ResponseEntity<>(Map.of("message","Post Deleted Successfully"),HttpStatus.OK);
     }
 
 }

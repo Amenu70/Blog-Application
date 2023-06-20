@@ -31,9 +31,13 @@ public class User implements UserDetails {
     private Role role;
     @OneToMany(mappedBy = "commentedByUser",cascade = CascadeType.ALL,fetch=FetchType.LAZY)
     private List<Comment> comments=new ArrayList<>();
-    @OneToOne(mappedBy = "user")
-    private Vote vote;
+    @OneToMany(mappedBy = "votedByUser")
+    private List<Vote> votes=new ArrayList<>();
 
+    public List<Vote> addVote(Vote vote,Post post){
+        votes.add(vote);
+        return  votes;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

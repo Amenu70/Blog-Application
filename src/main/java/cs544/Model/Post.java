@@ -29,8 +29,7 @@ public class Post {
     private User postAuthor;
     @OneToMany(mappedBy = "commentOnPost",cascade = CascadeType.ALL)
     private List<Comment> comments= new ArrayList<>();
-    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "voteOnPost",cascade = CascadeType.ALL)
     private List<Vote> votes = new ArrayList<>();
-
 
 }
