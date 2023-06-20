@@ -3,30 +3,31 @@ package cs544.DTO;
 import cs544.Model.Comment;
 import cs544.Model.Post;
 import cs544.Model.User;
+import cs544.Model.Vote;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 @Component
 public class ModelDTOMapper {
-    public User UserDTOtoUser(UserDTO userDTO){
-        //User user=modelMapper.map(userDTO, User.class);
-        User user=new User();
-        user.setName(userDTO.getName());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
-        user.setAbout(userDTO.getAbout());
-        return user;
-    }
+
     public UserDTO userToUserDto(User user){
-        //UserDTO userDTO=modelMapper.map(user, UserDTO.class);
         UserDTO userDTO=new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
         userDTO.setPassword(user.getPassword());
         userDTO.setAbout(user.getAbout());
-        userDTO.setPosts(user.getPosts().stream().map(post -> postToPostDTO(post)).toList());
+        userDTO.setRole(user.getRole().name());
+        userDTO.setPosts(user.getPosts().stream().map(this::postToPostDTO).toList());
         return userDTO;
+    }
+    public User UserDTOtoUser(UserDTO userDTO){
+        User user=new User();
+        user.setName(userDTO.getName());
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(userDTO.getPassword());
+        user.setAbout(userDTO.getAbout());
+        return user;
     }
     public PostDTO postToPostDTO(Post post){
         PostDTO postDto= new PostDTO();
@@ -36,7 +37,8 @@ public class ModelDTOMapper {
         postDto.setPostDate(post.getPostDate());
         postDto.setUpdateOn(post.getUpdateOn());
         postDto.setByUser(post.getPostAuthor().getName());
-        postDto.setComments(post.getComments().stream().map(comment -> commentToCommmentDTO(comment)).toList());
+        postDto.setComments(post.getComments().stream().map(this::commentToCommmentDTO).toList());
+        postDto.setVotes(post.getVotes().stream().map(this::voteToVoteDTO).toList());
         return postDto;
     }
     public Post postDTOtOPost(PostDTO postDto){
@@ -62,5 +64,21 @@ public class ModelDTOMapper {
         commentDTO.setCommentedOn(comment.getCommentedOn());
         commentDTO.setCommentedByUser(comment.getCommentedByUser().getName());
         return commentDTO;
+    }
+    public Vote VoteDTOtoVote(VoteDTO voteDTO){
+        Vote vote=new Vote();
+        vote.setRate(voteDTO.getRate());
+        vote.setVotedOn(voteDTO.getVotedOn());
+        vote.setUpdatedOn(voteDTO.getUpdatedOn());
+        return vote;
+    }
+    public VoteDTO voteToVoteDTO(Vote vote){
+        VoteDTO voteDTO=new VoteDTO();
+        voteDTO.setId(vote.getId());
+        voteDTO.setRate(vote.getRate());
+        voteDTO.setUpdatedOn(vote.getUpdatedOn());
+        voteDTO.setVotedOn(vote.getVotedOn());
+        voteDTO.setByUser(vote.getVotedByUser().getName());
+        return voteDTO;
     }
 }

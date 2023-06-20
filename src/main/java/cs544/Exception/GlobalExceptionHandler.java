@@ -15,18 +15,22 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity resourceNotFoundExceptionHandler(ResourceNotFoundException ex){
+    public ResponseEntity<Map<String,String>> resourceNotFoundExceptionHandler(ResourceNotFoundException ex){
         String message=ex.getMessage();
-        return new ResponseEntity(Map.of("message",message), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(Map.of("message",message), HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex){
+    public ResponseEntity<Map<String,String>> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex){
         Map<String,String> resp=new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error->{
-            String fieldname=((FieldError)error).getField();
+            String filenames=((FieldError)error).getField();
             String message=error.getDefaultMessage();
-            resp.put(fieldname,message);
+            resp.put(filenames,message);
         });
-        return new ResponseEntity(resp, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String,String>> authenticationExceptionHandler(AuthenticationException ex){
+        return new ResponseEntity<>(Map.of("message","Incorrect Email or Password"), HttpStatus.NOT_FOUND);
     }
 }

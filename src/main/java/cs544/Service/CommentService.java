@@ -6,9 +6,9 @@ import cs544.Exception.ResourceNotFoundException;
 import cs544.Model.Comment;
 import cs544.Model.Post;
 import cs544.Model.User;
-import cs544.Repository.CommentRepository;
+import cs544.Repository.ICommentRepository;
 import cs544.Repository.IUserRepository;
-import cs544.Repository.PostRepository;
+import cs544.Repository.IPostRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,13 +17,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class CommentService {
+public class CommentService implements ICommentService{
     @Autowired
-    private CommentRepository commentRepository;
+    private ICommentRepository commentRepository;
     @Autowired
     private IUserRepository userRepository;
     @Autowired
-    private PostRepository postRepository;
+    private IPostRepository postRepository;
     @Autowired
     private ModelDTOMapper modelDTOMapper;
 
@@ -31,7 +31,7 @@ public class CommentService {
     public CommentDTO saveComment(Integer postId, Integer userId,CommentDTO commentDTO){
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new ResourceNotFoundException("User","id",userId));
-        Post post =postRepository.findById(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(()->new ResourceNotFoundException("Post","id",postId));
         Comment comment=modelDTOMapper.commentDTOtoComment(commentDTO);
         comment.setCommentedOn(LocalDateTime.now());
@@ -47,7 +47,7 @@ public class CommentService {
                 orElseThrow(()-> new ResourceNotFoundException("Comment","id",commentId));
         oldComment.setContent(newComment.getContent());
         oldComment.setUpdatedOn(LocalDateTime.now());
-        Comment updatedComment=commentRepository.save(oldComment);
+        Comment updatedComment= commentRepository.save(oldComment);
         return modelDTOMapper.commentToCommmentDTO(updatedComment);
     }
     public void deleteComment(Integer commentId){
@@ -58,7 +58,7 @@ public class CommentService {
         }
     }
     public List<CommentDTO> commentsOfSpecificPost(Integer postId){
-        Post post =postRepository.findById(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(()->new ResourceNotFoundException("Post","id",postId));
         return post.getComments().stream()
                 .map(comment -> modelDTOMapper.commentToCommmentDTO(comment))
